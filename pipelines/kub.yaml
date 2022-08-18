@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javanxt
+  namespace: azurebambam
+  labels:
+    app: javanxt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: javanxt
+  template:
+    metadata:
+      labels:
+        app: javanxt
+    spec:
+       containers:
+        - name: azurebambam
+          image: prdctmntc.azurecr.io/azurebambam:#{Release.Artifacts.azurebambam.BuildId}#
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+       imagePullSecrets:
+        - name: azurestoragebambam
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: javanxt
+spec:
+  type: LoadBalancer
+  ports:
+    - name: java
+      port: 8080
+  selector:
+    app: javanxt
